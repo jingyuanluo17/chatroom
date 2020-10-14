@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script data-require="jquery@3.0.0" data-semver="3.0.0" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-app.js"></script>
+    <script>
+     var firebaseConfig = {
+    apiKey: "AIzaSyDdDCIiDJ3EOdzkog1kN-fSQmPlto2OyWU",
+    authDomain: "chatroom-1eb1b.firebaseapp.com",
+    databaseURL: "https://chatroom-1eb1b.firebaseio.com",
+    projectId: "chatroom-1eb1b",
+    storageBucket: "chatroom-1eb1b.appspot.com",
+    messagingSenderId: "1016840419831",
+    appId: "1:1016840419831:web:dbb61da8e20a08a51756f2"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+    </script>
+    <style>
+      #chatter {
+        list-style-type: none;
+        position: absolute;
+        margin-left: -2.5em;
+        width: 90%;
+      }
+      #chatter li {
+        border: 1px solid #efefef;
+        width: 100%;
+      }
+      #chatter li span {
+        font-weight: bold;
+        padding-right: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Hello goose, talk to me</h2>
+    <form id="chatbox">
+      <input type="text" id="myname" placeholder="name here" required/>
+      <input type="text" id="msg" placeholder="message here" required/>
+      <button type="submit">Send</button>
+    </form>
+    <ul id="chatter">
+    </ul>
+    <script>
+      var publish_msg = function(msgObj, callback){
+        console.log(msgObj);
+        let chatRef = firebase.database().ref("/chat");
+        let msgRef = chatRef.push();
+        msgRef.set(msgObj).then(callback)
+      };
+    
+      var display_msg = function(msg){
+        $("#chatter").prepend(`<li><span>${msg.user}:</span> ${msg.msg}</li>`);
+      };
+      
+      var loader = function(){
+        $("#chatbox").on('submit', function(evt){
+          evt.preventDefault();
+          let user = $("#myname").val();
+          let msg = $("#msg").val();
+          publish_msg({user, msg}, ()=>{
+            $("#myname").val('');
+            $("#msg").val('');
+          });
+          return false;
+        });
+        
+        let chatRef = firebase.database().ref("/chat");
+        chatRef.on("child_added", function(msg){
+          if (!!msg){
+            display_msg(msg.val());
+          }
+        });
+      };
+
+      $(document).ready(loader);
+    </script>
+  </body>
+</html>
