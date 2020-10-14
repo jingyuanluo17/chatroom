@@ -1,0 +1,13 @@
+ #chatter {
+        list-style-type: none;
+        position: absolute;
+        margin-left: -2.5em;
+        width: 90%;
+      }
+      #chatter li {
+        border: 1px solid #efefef;
+        width: 100%;
+      }
+      #chatter li span {
+        font-weight: bold;
+        padding-right: 1em;
